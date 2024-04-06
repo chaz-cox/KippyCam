@@ -1,16 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
-  import { StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import { storage } from './firebaseConfig'
+import { getStorage, ref , getDownloadURL}from "firebase/storage";
 
   export default function App() {
-    return (
+    const [source, setSource] = useState(null);
+    const handleRefresh = () =>{
+        const photoRef = ref(storage, "data/photo.jpg");
+        getDownloadURL(photoRef).then((url) =>{
+                  console.log("URL:",url);
+                  setSource({uri: url});
+              }).catch((err)=>{
+                  console.log(err);
+              });
+    };
+
+          return (
       <View style={styles.container}>
         <Text style={styles.text}>Fetch Image from firebase storage</Text>
         <Image
         style={styles.image}
-        source={{
-            uri:"https://firebasestorage.googleapis.com/v0/b/esp32-a1f31.appspot.com/o/data%2Fphoto.jpg?alt=media&token=091fe901-e2d1-41a7-a7e7-f970efe03b65"        
-            }}
+        source={source}
             />
+        <Button title="Refesh" onPress={handleRefresh} />
         <StatusBar style="auto" />
       </View>
     );

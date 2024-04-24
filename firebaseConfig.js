@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getStorage, ref , getDownloadURL}from "firebase/storage";
+import { getStorage, getDownloadURL}from "firebase/storage";
+import { getDatabase } from "firebase/database";
 
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
@@ -15,12 +16,14 @@ const firebaseConfig = {
   projectId: process.env.EXPO_PUBLIC_PROJECT_ID, 
   storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
   messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID, 
-  appId: process.env.EXPO_PUBLIC_APP_ID 
+  appId: process.env.EXPO_PUBLIC_APP_ID,
+  databaseURL: process.env.EXPO_PUBLIC_DATABASE_URL
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 const storage = getStorage(app);
-export {storage};
+export {storage, db};
 // For more information on how to access Firebase in your project,
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
 

@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
-import { storage } from './firebaseConfig'
-import { getStorage, ref , getDownloadURL}from "firebase/storage";
+import { storage, db} from './firebaseConfig'
+import { ref , getDownloadURL}from "firebase/storage";
+import { onValue, ref as dbRef, set } from "firebase/database";
 
   export default function App() {
     const [source, setSource] = useState(null);
@@ -16,9 +17,26 @@ import { getStorage, ref , getDownloadURL}from "firebase/storage";
               });
     };
 
+      useEffect(() => {
+          const queryRef = dbRef(db, 'photo/sent');
+          const onDataChange = (snapshot) =>{
+              const sent = snapshot.val();
+              console.log("sent:",sent);
+              if (sent){
+                  handleRefresh();
+                 set(queryRef, false).then(()=> console.log("sent status updated to false"))
+                  .catch((err)=> console.log("ERR when updating sent:",err));
+              }
+          };
+            const listener = onValue(queryRef, onDataChange);
+              return ()=>{
+                  listener();
+              };
+          },[]);
+
           return (
       <View style={styles.container}>
-        <Text style={styles.text}>Fetch Image from firebase storage</Text>
+        <Text style={styles.text}>KippyCam</Text>
         <Image
         style={styles.image}
         source={source}
